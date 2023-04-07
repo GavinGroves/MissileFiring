@@ -7,6 +7,9 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// 按键控制
+/// </summary>
 public class ButtonControl : MonoBehaviour
 {
     private Transform m_Transform;
