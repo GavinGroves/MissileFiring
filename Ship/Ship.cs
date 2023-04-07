@@ -10,7 +10,10 @@ public class Ship : MonoBehaviour
 {
     private Transform m_Transform;
     private MissileManager m_MissileManager;
+    private GameUIManager m_GameUIManager;
+        
     private GameObject prefab_Multi;//爆炸特效预制体
+    
     private int rewardNum = 0;//奖励积分
     private bool isLeft = false; //往左旋转
     private bool isRight = false; //往右旋转
@@ -32,6 +35,7 @@ public class Ship : MonoBehaviour
     {
         m_Transform = gameObject.GetComponent<Transform>();
         m_MissileManager = GameObject.Find("MissileManager").GetComponent<MissileManager>();
+        m_GameUIManager = GameObject.Find("Canvas").GetComponent<GameUIManager>();
         prefab_Multi = Resources.Load<GameObject>("Multi");
     }
 
@@ -73,6 +77,7 @@ public class Ship : MonoBehaviour
         {
             //死了不能移动
             isDeath = true;
+            m_GameUIManager.ShowOverPanel();
         }
         //飞机与导弹相撞
         if (other.CompareTag("Missile"))
@@ -82,11 +87,13 @@ public class Ship : MonoBehaviour
             Destroy(other.gameObject);//销毁碰撞到的导弹
             gameObject.SetActive(false);//隐藏飞机
             m_MissileManager.StopCreateMissile();//停止生产导弹
+            m_GameUIManager.ShowOverPanel();
         }
         //飞机与奖励物品碰撞
         if (other.CompareTag("Reward"))
         {
             rewardNum++;
+            m_GameUIManager.UpdateStarNum(rewardNum);
             Destroy(other.gameObject);
         }
     }
