@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 摄像机跟随角色
+/// </summary>
 public class CameraFollow : MonoBehaviour
 {
     private Transform m_Transform;
