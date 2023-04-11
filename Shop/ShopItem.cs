@@ -5,13 +5,21 @@ public class ShopItem
     private string rotate;
     private string model;
     private string price;
+    private string id;
 
-    public ShopItem(string speed, string rotate, string model, string price)
+    public ShopItem(string speed, string rotate, string model, string price, string id)
     {
         this.speed = speed;
         this.rotate = rotate;
         this.model = model;
         this.price = price;
+        this.id = id;
+    }
+
+    public string ID
+    {
+        get => id;
+        set => id = value;
     }
 
     public string Speed
@@ -40,6 +48,6 @@ public class ShopItem
 
     public override string ToString()
     {
-        return string.Format("speed:{0},rotate:{1},model:{2},price:{3}", speed, rotate, model, price);
+        return string.Format("speed:{0},rotate:{1},model:{2},price:{3},id{4}", speed, rotate, model, price,id);
     }
 }
