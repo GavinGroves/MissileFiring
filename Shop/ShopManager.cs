@@ -13,6 +13,7 @@ public class ShopManager : MonoBehaviour
 
     //商城数据对象
     private ShopData shopData;
+
     //引用持有
     private StartUIManager m_StartUIManager;
 
@@ -27,6 +28,7 @@ public class ShopManager : MonoBehaviour
     private Button btn_Left;
     private Button btn_Right;
 
+    //分数金币UI
     private Text text_StartNum;
     private Text text_ScoreNum;
 
@@ -44,21 +46,73 @@ public class ShopManager : MonoBehaviour
         btn_Right = m_Transform.Find("Right").GetComponent<Button>();
         btn_Left.onClick.AddListener(LeftButtonClick);
         btn_Right.onClick.AddListener(RightButtonClick);
+
         //实例化商城数据对象
         shopData = new ShopData();
         m_StartUIManager = GameObject.Find("Canvas").GetComponent<StartUIManager>();
+
         //加载xml
         shopData.ReadXMLByPath(dataPath);
         shopData.ReadXMLByGoldScoreAndState(savePath);
         //加载Item
         ui_ShopItem = Resources.Load<GameObject>("UI/ShopItem");
+
         //同步UI与xml中的 分数、金币数值
         text_StartNum = GameObject.Find("Canvas/StartPanel/Star/StarNum").GetComponent<Text>();
         text_ScoreNum = GameObject.Find("Canvas/StartPanel/Score/ScoreNum").GetComponent<Text>();
-        UpdateUI();
-        SetPlayerInfo(shopData.shopList[0].Model);
-        // m_StartUIManager.SetPlayButtonState(shopData.shopStateList[index]);
+
+        //读取PlayerPrefs中新的最高分
+        int tempHeightScore = PlayerPrefs.GetInt("HeightScore", 0);
+        if (tempHeightScore > shopData.heightScore)
+        {
+            //更新UI
+            UpdateUIHeightScore(tempHeightScore);
+            //更新xml，存储新的最高分
+            shopData.UpdateXMLData(savePath, "HeightScore", tempHeightScore.ToString());
+            //清空
+            PlayerPrefs.SetInt("HeightScore",0);
+        }
+        else
+        {
+            UpdateUIHeightScore(shopData.heightScore);
+        }
+
+        //读取PlayerPrefs金币,加上新获取的
+        int tempGoldCount = PlayerPrefs.GetInt("GoldCount", 0);
+        if (tempGoldCount > 0)
+        {
+            int gold = shopData.goldCount + tempGoldCount;
+            //更新UI
+            UpdateUIGold(gold);
+            //更新xml
+            shopData.UpdateXMLData(savePath,"GoldCount",gold.ToString());
+            //使用完清空数值，否则会一直增加
+            PlayerPrefs.SetInt("GoldCount",0);
+        }
+        else
+        {
+            UpdateUIGold(shopData.goldCount);
+        }
+
+        SetPlayerInfo(shopData.shopList[0]);
+
         CreateAllShopUI();
+    }
+
+    /// <summary>
+    /// 更新UI最高分HeightScore
+    /// </summary>
+    private void UpdateUIHeightScore(int heightScore)
+    {
+        text_ScoreNum.text = heightScore.ToString();
+    }
+
+    /// <summary>
+    /// 更新UI金币数
+    /// </summary>
+    private void UpdateUIGold(int gold)
+    {
+        text_StartNum.text = gold.ToString();
     }
 
     /// <summary>
@@ -93,7 +147,7 @@ public class ShopManager : MonoBehaviour
         //隐藏UI
         ShopUIHideAndShow(index);
     }
-    
+
     /// <summary>
     /// 左侧按钮点击事件
     /// </summary>
@@ -104,7 +158,7 @@ public class ShopManager : MonoBehaviour
             index--;
             int temp = shopData.shopStateList[index];
             m_StartUIManager.SetPlayButtonState(temp);
-            SetPlayerInfo(shopData.shopList[index].Model);
+            SetPlayerInfo(shopData.shopList[index]);
             ShopUIHideAndShow(index);
         }
     }
@@ -119,7 +173,7 @@ public class ShopManager : MonoBehaviour
             index++;
             int temp = shopData.shopStateList[index];
             m_StartUIManager.SetPlayButtonState(temp);
-            SetPlayerInfo(shopData.shopList[index].Model);
+            SetPlayerInfo(shopData.shopList[index]);
             ShopUIHideAndShow(index);
         }
     }
@@ -165,8 +219,10 @@ public class ShopManager : MonoBehaviour
     /// <summary>
     /// 存储当前角色信息到PlayerPrefs中去
     /// </summary>
-    private void SetPlayerInfo(string name)
+    private void SetPlayerInfo(ShopItem item)
     {
-        PlayerPrefs.SetString("PlayerName",name);
+        PlayerPrefs.SetString("PlayerName", item.Player);
+        PlayerPrefs.SetInt("PlayerSpeed",int.Parse(item.Speed));
+        PlayerPrefs.SetInt("PlayerRotate",int.Parse(item.Rotate));
     }
 }

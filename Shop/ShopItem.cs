@@ -6,14 +6,22 @@ public class ShopItem
     private string model;
     private string price;
     private string id;
+    private string player;
 
-    public ShopItem(string speed, string rotate, string model, string price, string id)
+    public ShopItem(string speed, string rotate, string model, string price, string id, string player)
     {
         this.speed = speed;
         this.rotate = rotate;
         this.model = model;
         this.price = price;
         this.id = id;
+        this.player = player;
+    }
+
+    public string Player
+    {
+        get => player;
+        set => player = value;
     }
 
     public string ID

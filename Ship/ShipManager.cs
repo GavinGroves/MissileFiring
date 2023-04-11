@@ -11,10 +11,19 @@ public class ShipManager : MonoBehaviour
     private GameObject player;
     void Start()
     {
+        //读取角色信息
         string ship = PlayerPrefs.GetString("PlayerName");
+        int speed = PlayerPrefs.GetInt("PlayerSpeed");
+        int rotate = PlayerPrefs.GetInt("PlayerRotate");
+        
+        //动态加载模型，实例化角色
         GameObject model = Resources.Load<GameObject>(ship);
         player = Instantiate(model, Vector3.zero, Quaternion.identity);
-        player.AddComponent<Ship>();
+        
+        //角色添加组件，设置属性
+        Ship myShip = player.AddComponent<Ship>();
+        myShip.Speed = speed;
+        myShip.Rotate = rotate;
         player.tag = "Player";
         if (model.name != "Ship_4")
         {

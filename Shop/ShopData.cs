@@ -34,9 +34,10 @@ public class ShopData
             string model = item.ChildNodes[2].InnerText;
             string price = item.ChildNodes[3].InnerText;
             string id = item.ChildNodes[4].InnerText;
+            string player = item.ChildNodes[5].InnerText;
 
             //遍历打印测试后，存储到List集合中
-            ShopItem shopItem = new ShopItem(speed, rotate, model, price,id);
+            ShopItem shopItem = new ShopItem(speed, rotate, model, price,id,player);
             shopList.Add(shopItem);
         }
     }
